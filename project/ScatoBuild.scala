@@ -20,6 +20,7 @@ object ScatoBuild extends Build {
     base = file(".")
   ).aggregate ( typeclass
               , baze
+              , profunctors
               , transformers
               , examples )
 
@@ -27,7 +28,10 @@ object ScatoBuild extends Build {
   lazy val typeclass    = module("typeclass")
   lazy val baze         = module("base").dependsOn(typeclass)
 
+  lazy val profunctors  = module("profunctors").dependsOn(baze)
   lazy val transformers = module("transformers").dependsOn(baze)
 
-  lazy val examples     = module("examples").dependsOn(baze, transformers)
+  lazy val examples     = module("examples").dependsOn( baze
+                                                      , profunctors
+                                                      , transformers)
 }

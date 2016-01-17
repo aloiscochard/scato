@@ -12,9 +12,9 @@ trait FunctorSyntax {
 }
 
 object FunctorSyntax {
-  class Ops[F[_], A](fa: F[A])(implicit F: Functor[F]) {
-    def map[B](f: A => B): F[B] = F.map[A, B](fa)(f)
-    def void: F[Unit] = F.map[A, Unit](fa)(_ => ())
+  class Ops[F[_], A](self: F[A])(implicit F: Functor[F]) {
+    def map[B](f: A => B): F[B] = F.map[A, B](self)(f)
+    def void: F[Unit] = F.map[A, Unit](self)(_ => ())
   }
 }
 

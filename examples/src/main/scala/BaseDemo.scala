@@ -65,4 +65,12 @@ object BaseDemo {
     def some[A](a: A): Option[A] = Some(a)
     println(OptionT(Identity(some(42))).map(_ - 10).flatMap(_ => OptionT(Identity(some(32)))))
   }
+
+  def withProfunctors(): Unit = {
+    import profunctors._
+    import Profunctor.syntax._
+
+    val f: Int => Int = identity[Int]
+    f.lmap[Double](_.toInt).rmap(_ / 2).apply(54.32)
+  }
 }

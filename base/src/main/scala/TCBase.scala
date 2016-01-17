@@ -2,10 +2,7 @@ package scato
 
 import clazz._
 
-class TCBase extends TCBase.TCBase0 {
-  implicit def functor[F[_]](implicit F: Functor[F]): TC[F, Functor] = TC[F, Functor](F)
-  implicit def monad[M[_]](implicit M: Monad[M]): TC[M, Monad] = TC[M, Monad](M)
-}
+class TCBase extends TCBase.TCBase0
 
 object TCBase {
   trait TCBase0 extends TCBase1 {
