@@ -94,9 +94,6 @@ object ConflictingInstancesTC {
   // Combinators
   import Hierarchy._
 
-  // Note that in practice `Wooz` and `Wooz` would have shared the `Foo` instance using a trait and subtyping,
-  // it is not required in this example as the implementations are left `undefined`.
-
   // A foo combinator
   def foo[F[_], A](f0: F[A], f1: F[A])(implicit F: TC[F, Foo]): F[A] = ???
 
