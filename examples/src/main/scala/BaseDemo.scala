@@ -38,7 +38,7 @@ object BaseDemo {
     foo0(opt0)
     foo1(opt0, opt1)
 
-    val opt01: Maybe[(Int, String)] = opt0(opt1)
+    val opt01: Maybe[(Int, String)] = opt0 <*> opt1
 
     (opt01 *> opt0).flatMap(_ => opt0)
   }
@@ -51,14 +51,14 @@ object BaseDemo {
     foo0(opt0)
     foo1(opt0, opt1)
 
-    val opt01: Option[(Int, String)] = opt0(opt1)
+    val opt01: Option[(Int, String)] = opt0 <*> opt1
 
     flatMap(opt01 *> opt0)(_ => opt0)
   }
 
   def withDisjunction(): Unit = {
     val ei0: String \/ Int = R_(42)
-    println(ei0.map(_ + 54)(ei0.map(_ - 10))(L_("error")))
+    println(ei0.map(_ + 54) <*> (ei0.map(_ - 10))(L_("error")))
   }
 
   def withOptionT(): Unit = {
@@ -72,5 +72,14 @@ object BaseDemo {
 
     val f: Int => Int = identity[Int]
     f.lmap[Double](_.toInt).rmap(_ / 2).apply(54.32)
+  }
+
+  def withTraversable(): Unit = {
+    import Traversable.syntax._
+
+    val xs: List[Int] = List(1, 2, 3)
+    val f: Int => Option[Int] = i => if (i > 10) None else Some(i)
+
+    println(xs.traverse(f))
   }
 }
