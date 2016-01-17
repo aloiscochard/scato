@@ -16,7 +16,7 @@ trait OptionTInstances { instances =>
     override val applicative = new Applicative[OptionT[F, ?]] {
       override val apply = new Apply[OptionT[F, ?]] {
         override val functor = instances.functor[F]
-        override def ap[A, B](oa: OptionT[F, A], of: OptionT[F, A => B]): OptionT[F, B] =
+        override def ap[A, B](oa: OptionT[F, A])(of: OptionT[F, A => B]): OptionT[F, B] =
           OptionT(of.run.flatMap(_.fold(Applicative[F].pure[Option[B]](None))(f => oa.run.map(_.map(f)))))
       }
       override def pure[A](a: A): OptionT[F, A] =

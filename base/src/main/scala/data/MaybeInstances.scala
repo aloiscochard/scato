@@ -12,7 +12,7 @@ trait MaybeInstances {
           override def map[A, B](ma: Maybe[A])(f: A => B): Maybe[B] =
             ma.fold(a => Just(f(a)), Empty())
         }
-        override def ap[A, B](ma: Maybe[A], mf: Maybe[A => B]): Maybe[B] =
+        override def ap[A, B](ma: Maybe[A])(mf: Maybe[A => B]): Maybe[B] =
           ma.fold(a => functor.map[A => B, B](mf)(f => f(a)), Empty())
       }
       override def pure[A](a: A): Maybe[A] = Just(a)

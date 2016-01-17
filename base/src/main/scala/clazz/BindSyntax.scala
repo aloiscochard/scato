@@ -4,6 +4,8 @@ package clazz
 import scala.language.implicitConversions
 
 trait BindSyntax {
+  def flatMap[M[_], A, B](ma: M[A])(f: A => M[B])(implicit M: TC[M, Bind]): M[B] = M.instance.flatMap(ma)(f)
+
   implicit def bindOps[M[_], A](ma: M[A])(implicit M: TC[M, Bind]): BindSyntax.Ops[M, A] =
     new BindSyntax.Ops(ma)(M.instance)
 

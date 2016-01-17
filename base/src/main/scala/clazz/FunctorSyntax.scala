@@ -4,6 +4,8 @@ package clazz
 import scala.language.implicitConversions
 
 trait FunctorSyntax {
+  def map[F[_], A, B](fa: F[A])(f: A => B)(implicit F: TC[F, Functor]): F[B] = F.instance.map(fa)(f)
+
   implicit def functorOps[F[_], A](fa: F[A])(implicit F: TC[F, Functor]): FunctorSyntax.Ops[F, A] =
     new FunctorSyntax.Ops(fa)(F.instance)
 

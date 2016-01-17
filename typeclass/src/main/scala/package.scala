@@ -28,6 +28,18 @@ trait TCU[C[_[_]], TA] {
   implicit def typeclass: TC[T, C] = TC[T, C](instance)
 }
 
+object TCU {
+  implicit def tc[A0, T0[_], C[_[_]]](implicit TC0: TC[T0, C]): TCU[C, T0[A0]] {
+    type T[X] = T0[X]
+    type A = A0
+  } = new TCU[C, T0[A0]] {
+    type T[X] = T0[X]
+    type A = A0
+    val instance: C[T] = TC0.instance.asInstanceOf[C[T]]
+    val leibniz: T0[A0] === T[A] = Leibniz.refl
+  }
+}
+
 case class Unapply[TA](ta: TA) extends AnyVal {
   def instance[A, T[_], C[_[_]]](implicit TA: TCU[C, TA]): C[TA.T] = TA.instance
 }
