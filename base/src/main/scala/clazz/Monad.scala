@@ -6,7 +6,7 @@ abstract class Monad[M[_]] {
   def bind: Bind[M]
 }
 
-object Monad extends MonadInstances {
+object Monad extends MonadInstances with MonadInstancesStdLib {
   def apply[M[_]](implicit M: TC[M, Monad]): Monad[M] = M.instance
   implicit def monad[M[_]](implicit M: Monad[M]): TC[M, Monad] = TC[M, Monad](M)
 }
