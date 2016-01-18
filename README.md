@@ -1,6 +1,8 @@
 Scato
 =====
 
+[![Join the chat at https://gitter.im/aloiscochard/scato](https://badges.gitter.im/aloiscochard/scato.svg)](https://gitter.im/aloiscochard/scato?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 In it's current form, it is a typeclass system encoding for Scala that have the particularity of using natural transformation instead of subtyping to encode the hierarchy of the classes.
 
 It is accompanied with a basic typeclass hierarchy and some examples to show the added benefits over conventional and currently used encodings. 
