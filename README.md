@@ -15,6 +15,8 @@ It is accompanied with a basic typeclass hierarchy and some examples to show the
 	- the base library containing core types and classes along with instances for the standard library.
 - `prelude`
 	- the default prelude which combine the syntax of the core types
+- `free`
+	- *Monads for free**
 - `profunctors`
 	- *Enterprise Grade Functors*
 - `transformers` 
@@ -34,6 +36,7 @@ https://github.com/aloiscochard/scato/blob/master/examples/src/main/scala/Confli
 
 ## Related projects
 * https://github.com/scalaz/scalaz
+* https://hackage.haskell.org/package/free
 * https://hackage.haskell.org/package/transformers
 * https://hackage.haskell.org/package/profunctors
 * https://www.haskell.org
