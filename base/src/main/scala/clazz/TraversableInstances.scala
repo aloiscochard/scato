@@ -11,7 +11,7 @@ trait TraversableInstances {
     override val foldable = Foldable.list
 
     override def traverse[F[_], A, B](ta: List[A])(f: A => F[B])(implicit F: TC[F, Applicative]): F[List[B]] =
-      ta.foldLeft[F[List[B]]](List.empty[B].pure[F]) { (flb, a) => flb.apply(f(a).map(b => (xs: List[B]) => b::xs)) }
+      ta.foldLeft[F[List[B]]](List.empty[B].pure[F]) { (flb, a) => flb.ap(f(a).map(b => (xs: List[B]) => b::xs)) }
     override def sequence[F[_], A](ta: List[F[A]])(implicit F: TC[F, Applicative]): F[List[A]] =
       traverse[F, F[A], A](ta)(identity)
   }

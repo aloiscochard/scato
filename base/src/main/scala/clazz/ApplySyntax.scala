@@ -13,12 +13,6 @@ trait ApplySyntax {
 
 object ApplySyntax {
   class Ops[F[_], A](fa: F[A])(implicit F: Apply[F]) {
-    def apply[B](fab: F[A => B]): F[B] = F.ap(fa)(fab)
-
-    def <*>[B](fb: F[B]): F[(A, B)] =
-      F.ap[A, (A, B)](fa)(F.functor.map[B, A => (A, B)](fb)(b => a => (a, b)))
-
-    def *>[B](fb: F[B]): F[B] =
-      F.functor.map[(A, B), B](<*>(fb)){ case (_, b) => b }
+    def ap[B](fab: F[A => B]): F[B] = F.ap(fa)(fab)
   }
 }
