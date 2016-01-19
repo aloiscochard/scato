@@ -15,7 +15,7 @@ object Interpreter {
         case Some(op) =>
           op match {
             case Op.Map(f) => go(thunk.tail, f(value))
-            case Op.Bind(f) => eval(f(value))
+            case Op.Bind(f) => go(f(value).reverse, Val.unit)
           }
       }
 
