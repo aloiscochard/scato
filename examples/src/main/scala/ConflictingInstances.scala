@@ -23,10 +23,10 @@ object ConflictingInstancesSubTyping {
   // `Waaz` newtype, used to override `Baz` behavior on a given value.
   case class Waaz[F[_], A](run: F[A])
   object Waaz {
-    implicit def waazBar[F[_], A](implicit F: Foo[F]): Baz[Waaz[F, ?]] = ???
+    implicit def waazBaz[F[_], A](implicit F: Foo[F]): Baz[Waaz[F, ?]] = ???
   }
 
-  // Note that in practice `Wooz` and `Wooz` would have shared the `Foo` instance using a trait and subtyping,
+  // Note that in practice `Wooz` and `Waaz` would have shared the `Foo` instance using a trait and subtyping,
   // it is not required in this example as the implementations are left `undefined`.
 
   // A foo combinator
