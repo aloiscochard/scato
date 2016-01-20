@@ -35,7 +35,7 @@ object TCU {
   } = new TCU[C, T0[A0]] {
     type T[X] = T0[X]
     type A = A0
-    val instance: C[T] = TC0.instance.asInstanceOf[C[T]]
+    val instance: C[T] = TC0.instance
     val leibniz: T0[A0] === T[A] = Leibniz.refl
   }
 }
