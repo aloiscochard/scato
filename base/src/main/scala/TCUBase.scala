@@ -16,9 +16,9 @@ object TCUBase {
     } = new TCU[C, T0[B0, A0]] {
       override type T[X] = T0[B0, X]
       override type A = A0
-      override val instance = TC0.instance.asInstanceOf[C[T]]
-      override val instanceTag = TC0.instanceTag
-      override val leibniz: T0[B0, A0] === T[A] = Leibniz.refl
+      override def instance = TC0.instance.asInstanceOf[C[T]]
+      override def instanceTag = TC0.instanceTag
+      override def leibniz: T0[B0, A0] === T[A] = Leibniz.refl
     }
 
     // OptionT
@@ -30,9 +30,9 @@ object TCUBase {
     } = new TCU[C, T0[F, A0]] {
       override type T[X] = T0[F, X]
       override type A = A0
-      override val instance = TC0.instance.asInstanceOf[C[T]]
-      override val instanceTag = TC0.instanceTag
-      override val leibniz: T0[F, A0] === T[A] = Leibniz.refl
+      override def instance = TC0.instance.asInstanceOf[C[T]]
+      override def instanceTag = TC0.instanceTag
+      override def leibniz: T0[F, A0] === T[A] = Leibniz.refl
     }
   }
 }

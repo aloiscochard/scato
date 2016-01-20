@@ -24,8 +24,8 @@ object TC {
 
   def apply[T[_], C[_[_]]](i: C[T])(implicit CT: ClassTag[C[T]]): TC[T, C] =
     new TC[T, C] {
-      override val instance = cache.getOrElseUpdate(CT.hashCode, i).asInstanceOf[C[T]]
-      override val instanceTag = CT
+      override def instance = cache.getOrElseUpdate(CT.hashCode, i).asInstanceOf[C[T]]
+      override def instanceTag = CT
     }
 }
 
@@ -52,9 +52,9 @@ object TCU {
   } = new TCU[C, T0[A0]] {
     override type T[X] = T0[X]
     override type A = A0
-    override val instance: C[T] = TC0.instance
-    override val instanceTag: ClassTag[C[T]] = TC0.instanceTag
-    override val leibniz: T0[A0] === T[A] = Leibniz.refl
+    override def instance: C[T] = TC0.instance
+    override def instanceTag: ClassTag[C[T]] = TC0.instanceTag
+    override def leibniz: T0[A0] === T[A] = Leibniz.refl
   }
 }
 
