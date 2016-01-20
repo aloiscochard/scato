@@ -27,6 +27,12 @@ object TC {
       override def instance = cache.getOrElseUpdate(CT.hashCode, i).asInstanceOf[C[T]]
       override def instanceTag = CT
     }
+
+  def pure[T[_], C[_[_]]](i: C[T])(implicit CT: ClassTag[C[T]]): TC[T, C] =
+    new TC[T, C] {
+      override def instance = i
+      override def instanceTag = CT
+    }
 }
 
 
