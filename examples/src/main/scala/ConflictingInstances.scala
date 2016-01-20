@@ -58,12 +58,12 @@ object ConflictingInstancesTC {
   abstract class Foo[F[_]]
   object Foo { implicit val option: TC[Option, Foo] = ??? }
 
-  abstract class Bar[F[_]] extends Foo[F]
+  abstract class Bar[F[_]]
   object Bar {
     implicit def all[F[_]](implicit F: TC[F, Foo]): TC[F, Bar] = ???
   }
 
-  abstract class Baz[F[_]] extends Foo[F]
+  abstract class Baz[F[_]]
   object Baz { implicit def int[F[_]](implicit F: TC[F, Foo]): TC[F, Baz] = ??? }
 
   // Newtypes
