@@ -1,18 +1,34 @@
 package scato
 
+import scala.reflect.ClassTag
+import scala.collection.concurrent.TrieMap
+
 import Leibniz.===
 
-trait ~~>[A[_[_]], B[_[_]]] {
+abstract class ~~>[A[_[_]], B[_[_]]] {
   def apply[T[_]](at: A[T]): B[T]
 }
 
-trait ~~>>[A[_[_, _]], B[_[_, _]]] {
+abstract class ~~>>[A[_[_, _]], B[_[_, _]]] {
   def apply[T[_, _]](at: A[T]): B[T]
 }
 
-case class TC[T[_], C[_[_]]](instance: C[T]) extends AnyVal {
-  def map[D[_[_]]](f: C ~~> D): TC[T, D] = TC(f(instance))
+abstract class TC[T[_], C[_[_]]] {
+  def instance: C[T]
+  def instanceTag: ClassTag[C[T]]
+  def map[D[_[_]]](f: C ~~> D)(implicit DT: ClassTag[D[T]]): TC[T, D] = TC(f(instance))
 }
+
+object TC {
+  private val cache: TrieMap[Int, Any] = TrieMap()
+
+  def apply[T[_], C[_[_]]](i: C[T])(implicit CT: ClassTag[C[T]]): TC[T, C] =
+    new TC[T, C] {
+      override val instance = cache.getOrElseUpdate(CT.hashCode, i).asInstanceOf[C[T]]
+      override val instanceTag = CT
+    }
+}
+
 
 case class TC2[T[_, _], C[_[_, _]]](instance: C[T]) extends AnyVal {
   def map[D[_[_, _]]](f: C ~~>> D): TC2[T, D] = TC2(f(instance))
@@ -22,10 +38,11 @@ trait TCU[C[_[_]], TA] {
   type T[_]
   type A
   def instance: C[T]
+  def instanceTag: ClassTag[C[T]]
   def leibniz: TA === T[A]
 
   def apply(ta: TA): T[A] = leibniz(ta)
-  implicit def typeclass: TC[T, C] = TC[T, C](instance)
+  implicit def typeclass: TC[T, C] = TC[T, C](instance)(instanceTag)
 }
 
 object TCU {
@@ -33,10 +50,11 @@ object TCU {
     type T[X] = T0[X]
     type A = A0
   } = new TCU[C, T0[A0]] {
-    type T[X] = T0[X]
-    type A = A0
-    val instance: C[T] = TC0.instance
-    val leibniz: T0[A0] === T[A] = Leibniz.refl
+    override type T[X] = T0[X]
+    override type A = A0
+    override val instance: C[T] = TC0.instance
+    override val instanceTag: ClassTag[C[T]] = TC0.instanceTag
+    override val leibniz: T0[A0] === T[A] = Leibniz.refl
   }
 }
 
