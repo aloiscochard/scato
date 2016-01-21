@@ -2,7 +2,6 @@ package scato
 package free
 package monad
 
-import Control.Lazy
 import system.Unsafe.Val
 import system.MonadCore
 import system.MonadCore.Thunk
