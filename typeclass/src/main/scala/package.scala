@@ -15,23 +15,23 @@ abstract class ~~>>[A[_[_, _]], B[_[_, _]]] {
 
 abstract class TC[T[_], C[_[_]]] {
   def instance: C[T]
-  def instanceTag: ClassTag[C[T]]
+  def instanceTag: Int
   def map[D[_[_]]](f: C ~~> D)(implicit DT: ClassTag[D[T]]): TC[T, D] = TC(f(instance))
 }
 
 object TC {
   private val cache: TrieMap[Int, Any] = TrieMap()
 
-  def apply[T[_], C[_[_]]](i: C[T])(implicit CT: ClassTag[C[T]]): TC[T, C] =
-    new TC[T, C] {
-      override def instance = cache.getOrElseUpdate(CT.hashCode, i).asInstanceOf[C[T]]
-      override def instanceTag = CT
-    }
-
-  def pure[T[_], C[_[_]]](i: C[T])(implicit CT: ClassTag[C[T]]): TC[T, C] =
+  def apply[T[_], C[_[_]]](i: C[T]): TC[T, C] =
     new TC[T, C] {
       override def instance = i
-      override def instanceTag = CT
+      override def instanceTag = 0
+    }
+
+  def capture[T[_], C[_[_]], ID[_]](i: => C[T])(implicit CT: ClassTag[C[ID]]): TC[T, C] =
+    new TC[T, C] {
+      override def instance = cache.getOrElseUpdate(instanceTag, i).asInstanceOf[C[T]]
+      override def instanceTag = CT.hashCode
     }
 }
 
@@ -44,11 +44,11 @@ trait TCU[C[_[_]], TA] {
   type T[_]
   type A
   def instance: C[T]
-  def instanceTag: ClassTag[C[T]]
+  def instanceTag: Int
   def leibniz: TA === T[A]
 
   def apply(ta: TA): T[A] = leibniz(ta)
-  implicit def typeclass: TC[T, C] = TC[T, C](instance)(instanceTag)
+  implicit def typeclass: TC[T, C] = TC[T, C](instance)
 }
 
 object TCU {
@@ -58,8 +58,8 @@ object TCU {
   } = new TCU[C, T0[A0]] {
     override type T[X] = T0[X]
     override type A = A0
-    override def instance: C[T] = TC0.instance
-    override def instanceTag: ClassTag[C[T]] = TC0.instanceTag
+    override def instance = TC0.instance
+    override def instanceTag = TC0.instanceTag
     override def leibniz: T0[A0] === T[A] = Leibniz.refl
   }
 }
