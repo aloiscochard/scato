@@ -13,5 +13,6 @@ case class Free[F[_], A](thunk: Thunk) {
 }
 
 object Free extends FreeInstances {
+  def pure[F[_], A](a: A): Free[F, A] = Free(MonadCore.Thunk.pure[A](_ => a))
   def run[F[_], A](free: Free[F, A]): F[A] = Val.reify[F[A]](MonadCore.eval(free.thunk))
 }
