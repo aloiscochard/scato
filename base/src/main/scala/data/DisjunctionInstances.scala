@@ -5,7 +5,7 @@ import clazz._
 import Disjunction.{\/, L_, R_}
 
 trait DisjunctionInstances {
-  implicit def monad[L]: Monad[L \/ ?] = new Monad[L \/ ?] {
+  implicit def monad[L]: TC[L \/ ?, Monad] = TC.capture[L \/ ?, Monad, Any \/ ?](new Monad[L \/ ?] {
     override val applicative = new Applicative[L \/ ?] {
       override val apply = new Apply[L \/ ?] {
         override val functor = new Functor[L \/ ?] {
@@ -24,10 +24,10 @@ trait DisjunctionInstances {
       override def flatMap[A, B](oa: L \/ A)(f: A => L \/ B): L \/ B =
         oa.fold[L \/ B](l => L_(l))(a => f(a))
     }
-  }
+  })
 
-  implicit def applicativeTC[L]: TC[L \/ ?, Applicative] = TC[L \/ ?, Applicative](monad.applicative)
-  implicit def applyTC[L]: TC[L \/ ?, Apply] = TC[L \/ ?, Apply](monad.applicative.apply)
-  implicit def functorTC[L]: TC[L \/ ?, Functor] = TC[L \/ ?, Functor](monad.applicative.apply.functor)
-  implicit def bindTC[L]: TC[L \/ ?, Bind] = TC[L \/ ?, Bind](monad.bind)
+  implicit def applicativeTC[L]: TC[L \/ ?, Applicative] = TC[L \/ ?, Applicative](monad[L].instance.applicative)
+  implicit def applyTC[L]: TC[L \/ ?, Apply] = TC[L \/ ?, Apply](monad[L].instance.applicative.apply)
+  implicit def functorTC[L]: TC[L \/ ?, Functor] = TC[L \/ ?, Functor](monad[L].instance.applicative.apply.functor)
+  implicit def bindTC[L]: TC[L \/ ?, Bind] = TC[L \/ ?, Bind](monad[L].instance.bind)
 }
