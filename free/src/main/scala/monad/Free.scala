@@ -3,8 +3,9 @@ package free
 package monad
 
 import Control.Lazy
-import System.Val
-import Algebra._
+import system.Unsafe.Val
+import system.MonadCore
+import system.MonadCore.Thunk
 
 case class Free[F[_], A](thunk: Thunk) {
   def ap[B](fab: Free[F, A => B]): Free[F, B] = flatMap(a => fab.map(_(a)))
@@ -13,5 +14,5 @@ case class Free[F[_], A](thunk: Thunk) {
 }
 
 object Free extends FreeInstances {
-  def run[F[_], A](free: Free[F, A]): F[A] = Val.reify[F[A]](Interpreter.eval(free.thunk))
+  def run[F[_], A](free: Free[F, A]): F[A] = Val.reify[F[A]](MonadCore.eval(free.thunk))
 }

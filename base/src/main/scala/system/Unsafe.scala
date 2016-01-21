@@ -1,7 +1,7 @@
 package scato
+package system
 
-object System {
-
+object Unsafe {
   type Val = Any with ({ type Tag = Any })
 
   object Val {

@@ -1,12 +1,37 @@
 package scato
-package free
+package system
 
 import scala.annotation.tailrec
+import Unsafe.Val
 
-import Algebra._
-import System.Val
+object MonadCore {
+  type Thunk = List[Op]
 
-object Interpreter {
+  object Thunk {
+    import Op._
+    import Val._
+
+    def pure[A](f: Unit => A): Thunk =
+      Map(_ => cast(f(()))) :: Nil
+
+    def ap[A, B](xs: Thunk)(fab: Thunk): Thunk =
+      Ap(fab) :: xs
+
+    def map[A, B](xs: Thunk)(f: A => B): Thunk =
+      Map(x => cast(f(reify[A](x)))) :: xs
+
+    def bind[A](xs: Thunk)(f: A => Thunk): Thunk =
+      Bind(x => f(reify[A](x))) :: xs
+  }
+
+  sealed trait Op
+
+  object Op {
+    case class Ap(fab: Thunk) extends Op
+    case class Map(f: Val => Val) extends Op
+    case class Bind(f: Val => Thunk) extends Op
+  }
+
   def eval(thunk0: Thunk): Val = {
     @tailrec
     def go(thunk: List[Op], value: Val, stack: List[List[Op]]): Val =
