@@ -15,23 +15,23 @@ abstract class ~~>>[A[_[_, _]], B[_[_, _]]] {
 
 abstract class TC[T[_], C[_[_]]] {
   def instance: C[T]
-  def instanceTag: Int
+  def instanceTag: TypeTag[_]
   def map[D[_[_]]](f: C ~~> D): TC[T, D] = TC(f(instance))
 }
 
 object TC {
-  private val cache: TrieMap[Int, Any] = TrieMap()
+  private val cache: TrieMap[TypeTag[_], Any] = TrieMap()
 
   def apply[T[_], C[_[_]]](i: C[T]): TC[T, C] =
     new TC[T, C] {
       override def instance = i
-      override def instanceTag = 0
+      override def instanceTag = null
     }
 
   def capture[T[_], C[_[_]], ID[_]](i: => C[T])(implicit CT: TypeTag[C[ID]]): TC[T, C] =
     new TC[T, C] {
       override def instance = cache.getOrElseUpdate(instanceTag, i).asInstanceOf[C[T]]
-      override def instanceTag = CT.hashCode
+      override def instanceTag = CT
     }
 }
 
@@ -44,7 +44,7 @@ trait TCU[C[_[_]], TA] {
   type T[_]
   type A
   def instance: C[T]
-  def instanceTag: Int
+  def instanceTag: TypeTag[_]
   def leibniz: TA === T[A]
 
   def apply(ta: TA): T[A] = leibniz(ta)
