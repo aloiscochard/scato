@@ -9,10 +9,11 @@ sealed trait Disjunction[+L, +R] {
   }
 }
 
-object Disjunction extends DisjunctionInstances {
+object Disjunction extends DisjunctionInstances with DisjunctionFunctions{
   object Syntax extends DisjunctionSyntax
 
   type \/[L, R] = Disjunction[L, R]
+
   case class L_[L](value: L) extends (L \/ Nothing)
   case class R_[R](value: R) extends (Nothing \/ R)
 
