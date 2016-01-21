@@ -26,7 +26,13 @@ object ScatoBuild extends Build {
               , prelude
               , examples )
 
-  lazy val typeclass    = module("typeclass")
+  lazy val typeclass    = module("typeclass").settings(
+    libraryDependencies ++= Seq(
+      "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value,
+      "org.scala-lang"  %  "scala-compiler" % scalaVersion.value % "provided"
+    )
+  )
+
   lazy val baze         = module("base").dependsOn(typeclass)
 
   lazy val free         = module("free").dependsOn(baze)

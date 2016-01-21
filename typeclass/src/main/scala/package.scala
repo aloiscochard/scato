@@ -1,6 +1,6 @@
 package scato
 
-import scala.reflect.ClassTag
+import scala.reflect.runtime.universe.TypeTag
 import scala.collection.concurrent.TrieMap
 
 import Leibniz.===
@@ -16,7 +16,7 @@ abstract class ~~>>[A[_[_, _]], B[_[_, _]]] {
 abstract class TC[T[_], C[_[_]]] {
   def instance: C[T]
   def instanceTag: Int
-  def map[D[_[_]]](f: C ~~> D)(implicit DT: ClassTag[D[T]]): TC[T, D] = TC(f(instance))
+  def map[D[_[_]]](f: C ~~> D): TC[T, D] = TC(f(instance))
 }
 
 object TC {
@@ -28,7 +28,7 @@ object TC {
       override def instanceTag = 0
     }
 
-  def capture[T[_], C[_[_]], ID[_]](i: => C[T])(implicit CT: ClassTag[C[ID]]): TC[T, C] =
+  def capture[T[_], C[_[_]], ID[_]](i: => C[T])(implicit CT: TypeTag[C[ID]]): TC[T, C] =
     new TC[T, C] {
       override def instance = cache.getOrElseUpdate(instanceTag, i).asInstanceOf[C[T]]
       override def instanceTag = CT.hashCode
