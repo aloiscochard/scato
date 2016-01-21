@@ -2,7 +2,7 @@ package scato
 package clazz
 
 trait MonadInstances {
-  implicit val identity: Monad[Identity] = new Monad[Identity] {
+  implicit val identity: TC[Identity, Monad] = TC(new Monad[Identity] {
     override val applicative = new Applicative[Identity] {
       override val apply = new Apply[Identity] {
         override val functor = new Functor[Identity] {
@@ -17,5 +17,5 @@ trait MonadInstances {
       override def apply = applicative.apply
       override def flatMap[A, B](oa: Identity[A])(f: A => Identity[B]): Identity[B] = f(oa.run)
     }
-  }
+  })
 }

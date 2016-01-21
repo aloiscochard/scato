@@ -2,7 +2,7 @@ package scato
 package clazz
 
 trait MonadInstancesStdLib {
-  implicit val option: Monad[Option] = new Monad[Option] {
+  implicit val option: TC[Option, Monad] = TC(new Monad[Option] {
     override val applicative = new Applicative[Option] {
       override val apply = new Apply[Option] {
         override val functor = new Functor[Option] {
@@ -17,9 +17,9 @@ trait MonadInstancesStdLib {
       override def apply = applicative.apply
       override def flatMap[A, B](oa: Option[A])(f: A => Option[B]): Option[B] = oa.flatMap(f)
     }
-  }
+  })
 
-  implicit val list: Monad[List] = new Monad[List] {
+  implicit val list: TC[List, Monad] = TC(new Monad[List] {
     override val applicative = new Applicative[List] {
       override val apply = new Apply[List] {
         override val functor = new Functor[List] {
@@ -34,5 +34,5 @@ trait MonadInstancesStdLib {
       override def apply = applicative.apply
       override def flatMap[A, B](xs: List[A])(f: A => List[B]): List[B] = xs.flatMap(f)
     }
-  }
+  })
 }
