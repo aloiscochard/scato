@@ -6,13 +6,13 @@ import Apply.syntax._
 import Applicative.syntax._
 
 trait TraversableInstances {
-  implicit val list: Traversable[List] = new Traversable[List] {
-    override val functor = Monad.list.applicative.apply.functor
-    override val foldable = Foldable.list
+  implicit val list: TC[List, Traversable] = TC(new Traversable[List] {
+    override val functor = Monad[List].applicative.apply.functor
+    override val foldable = Foldable[List]
 
     override def traverse[F[_], A, B](ta: List[A])(f: A => F[B])(implicit F: TC[F, Applicative]): F[List[B]] =
       ta.foldLeft[F[List[B]]](List.empty[B].pure[F]) { (flb, a) => flb.ap(f(a).map(b => (xs: List[B]) => b::xs)) }
     override def sequence[F[_], A](ta: List[F[A]])(implicit F: TC[F, Applicative]): F[List[A]] =
       traverse[F, F[A], A](ta)(identity)
-  }
+  })
 }
