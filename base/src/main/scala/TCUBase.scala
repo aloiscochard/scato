@@ -17,7 +17,6 @@ object TCUBase {
       override type T[X] = T0[B0, X]
       override type A = A0
       override def instance = TC0.instance.asInstanceOf[C[T]]
-      override def instanceTag = TC0.instanceTag
       override def leibniz: T0[B0, A0] === T[A] = Leibniz.refl
     }
 
@@ -31,7 +30,6 @@ object TCUBase {
       override type T[X] = T0[F, X]
       override type A = A0
       override def instance = TC0.instance.asInstanceOf[C[T]]
-      override def instanceTag = TC0.instanceTag
       override def leibniz: T0[F, A0] === T[A] = Leibniz.refl
     }
   }

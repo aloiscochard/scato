@@ -44,7 +44,6 @@ trait TCU[C[_[_]], TA] {
   type T[_]
   type A
   def instance: C[T]
-  def instanceTag: TypeTag[_]
   def leibniz: TA === T[A]
 
   def apply(ta: TA): T[A] = leibniz(ta)
@@ -59,7 +58,6 @@ object TCU {
     override type T[X] = T0[X]
     override type A = A0
     override def instance = TC0.instance
-    override def instanceTag = TC0.instanceTag
     override def leibniz: T0[A0] === T[A] = Leibniz.refl
   }
 }
