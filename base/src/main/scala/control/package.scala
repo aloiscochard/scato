@@ -1,5 +1,5 @@
 package scato
 
-object Control {
+package object control {
   type Lazy[A] = Unit => A
 }

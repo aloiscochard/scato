@@ -11,7 +11,6 @@ abstract class Traversable[T[_]] {
 
 object Traversable extends TraversableInstances {
   def apply[T[_]](implicit T: TC[T, Traversable]): Traversable[T] = T.instance
-  implicit def traversable[T[_]](implicit T: Traversable[T]): TC[T, Traversable] = TC[T, Traversable](T)
 
   object syntax extends TraversableSyntax
 }

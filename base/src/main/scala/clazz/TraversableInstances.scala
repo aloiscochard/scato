@@ -7,8 +7,8 @@ import Applicative.syntax._
 
 trait TraversableInstances {
   implicit val list: TC[List, Traversable] = TC(new Traversable[List] {
-    override val functor = Monad[List].applicative.apply.functor
-    override val foldable = Foldable[List]
+    override val functor = Monad.list.instance.applicative.apply.functor
+    override val foldable = Foldable.list.instance
 
     override def traverse[F[_], A, B](ta: List[A])(f: A => F[B])(implicit F: TC[F, Applicative]): F[List[B]] =
       ta.foldLeft[F[List[B]]](List.empty[B].pure[F]) { (flb, a) => flb.ap(f(a).map(b => (xs: List[B]) => b::xs)) }

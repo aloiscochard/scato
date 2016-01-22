@@ -2,16 +2,19 @@ package scato
 package free
 package monad
 
-import Control.Lazy
-import System.Val
-import Algebra._
+import system.MonadCore
+import system.MonadCore.Thunk
 
 case class Free[F[_], A](thunk: Thunk) {
-  def ap[B](fab: Free[F, A => B]): Free[F, B] = flatMap(a => fab.map(_(a)))
-  def flatMap[B](f: A => Free[F, B]): Free[F, B] = Free(Thunk.bind(thunk)(a => f(a).thunk))
-  def map[B](f: A => B): Free[F, B] = Free(Thunk.map(thunk)(f))
+  def ap[B](fab: Free[F, A => B]): Free[F, B] =
+    flatMap(a => fab.map(_(a)))
+  def flatMap[B](f: A => Free[F, B]): Free[F, B] =
+    Free(Thunk.bind[A, Free[F, B]](thunk)(a => f(a))(_.thunk))
+  def map[B](f: A => B): Free[F, B] =
+    Free(Thunk.map[A, B](thunk)(f))
 }
 
 object Free extends FreeInstances {
-  def run[F[_], A](free: Free[F, A]): F[A] = Val.reify[F[A]](Interpreter.eval(free.thunk))
+  def pure[F[_], A](a: A): Free[F, A] = Free(Thunk.pure[A](_ => a))
+  def run[F[_], A](free: Free[F, A]): F[A] = MonadCore.eval_[F[A]](free.thunk)
 }
