@@ -20,8 +20,8 @@ object MonadCore {
     def map[A, B](xs: Thunk)(f: A => B): Thunk =
       Map(x => cast(f(reify[A](x)))) :: xs
 
-    def bind[A](xs: Thunk)(f: A => Thunk): Thunk =
-      Bind(x => f(reify[A](x))) :: xs
+    def bind[A, B](xs: Thunk)(f: A => B)(thunk: B => Thunk): Thunk =
+      Bind(x => thunk(f(reify[A](x)))) :: xs
   }
 
   sealed trait Op
@@ -32,7 +32,10 @@ object MonadCore {
     case class Bind(f: Val => Thunk) extends Op
   }
 
-  def eval(thunk0: Thunk): Val = {
+  def eval[A, B](thunk: Thunk, a: A): B = Val.reify[B](unsafeEval(thunk, Val.cast[A](a)))
+  def eval_[A](thunk: Thunk): A = Val.reify[A](unsafeEval_(thunk))
+
+  def unsafeEval(thunk0: Thunk, value0: Val): Val = {
     @tailrec
     def go(thunk: List[Op], value: Val, stack: List[List[Op]]): Val =
       thunk.headOption match {
@@ -50,6 +53,7 @@ object MonadCore {
           }
       }
 
-    go(thunk0.reverse, Val.unit, Nil)
+    go(thunk0.reverse, value0, Nil)
   }
+  def unsafeEval_(thunk: Thunk): Val = unsafeEval(thunk, Val.unit)
 }
