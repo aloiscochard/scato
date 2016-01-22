@@ -1,6 +1,8 @@
 import sbt._
 import Keys._
 
+import pl.project13.scala.sbt.JmhPlugin
+
 object ScatoBuild extends Build {
   val testDeps = Seq("org.scalacheck" %% "scalacheck" % "1.12.5" % "test")
 
@@ -24,13 +26,13 @@ object ScatoBuild extends Build {
               , profunctors
               , transformers
               , prelude
+              , benchmarks
               , examples )
 
   lazy val typeclass    = module("typeclass").settings(
-    libraryDependencies ++= Seq(
-      "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value,
-      "org.scala-lang"  %  "scala-compiler" % scalaVersion.value % "provided"
-    )
+    libraryDependencies ++=
+      Seq ( "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value
+          , "org.scala-lang"  %  "scala-compiler" % scalaVersion.value % "provided" )
   )
 
   lazy val baze         = module("base").dependsOn(typeclass)
@@ -40,6 +42,19 @@ object ScatoBuild extends Build {
   lazy val transformers = module("transformers").dependsOn(baze)
 
   lazy val prelude      = module("prelude").dependsOn(baze)
+
+  lazy val benchmarks   = module("benchmarks")
+    .dependsOn( baze
+              , free
+              , profunctors
+              , transformers
+              , prelude)
+    .enablePlugins(JmhPlugin)
+    .settings(
+      libraryDependencies ++=
+        Seq ( "org.scalaz" %% "scalaz-core" % "7.2.0"
+            , "org.spire-math" %% "cats" % "0.3.0" )
+    )
 
   lazy val examples     = module("examples").dependsOn( baze
                                                       , profunctors
