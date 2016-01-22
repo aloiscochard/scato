@@ -24,11 +24,11 @@ object Scalaz {
   import scalaz.Free._
   import scalaz.syntax.traverse._
 
-  def mkState[F[_]](xs: F[Int])(f: Long => (Unit, Long))(implicit F: Traverse[F]) =
-    xs.foldLeft(State.state[Long, Unit](()).liftF)((s, _) => s.flatMap(_ => State[Long, Unit](s => f(s).swap).liftF))
+  def mkState[F[_]](xs: F[Int])(f: Long => (Long, Unit))(implicit F: Traverse[F]) =
+    xs.foldLeft(State.state[Long, Unit](()).liftF)((s, _) => s.flatMap(_ => State[Long, Unit](s => f(s)).liftF))
 
-  def run[F[_]](xs: F[Int])(f: Long => (Unit, Long))(implicit F: Traverse[F]): (Unit, Long) =
-    mkState(xs)(f).foldRun(0L)((a,b) => b(a)).swap
+  def run[F[_]](xs: F[Int])(f: Long => (Long, Unit))(implicit F: Traverse[F]): (Long, Unit) =
+    mkState(xs)(f).foldRun(0L)((a,b) => b(a))
 }
 
 @Fork(1)
@@ -36,12 +36,13 @@ object Scalaz {
 class Interpreters {
   import Data._
 
-  def f(i: Long): (Unit, Long) = ((), i + 1)
+  def f0(i: Long): (Unit, Long) = ((), i + 1)
+  def f1(i: Long): (Long, Unit) = (i + 1, ())
 
   @Benchmark def scalaz = {
     import _root_.scalaz.std.AllInstances._
-    Scalaz.run(xs)(f _)
+    Scalaz.run(xs)(f1 _)
   }
 
-  @Benchmark def scato  = Scato.run(xs)(f _)
+  @Benchmark def scato  = Scato.run(xs)(f0 _)
 }
