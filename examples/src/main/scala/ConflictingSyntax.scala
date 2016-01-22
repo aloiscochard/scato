@@ -66,7 +66,6 @@ object ConflictingSyntax {
   // there exists a default one, let's see.
 
   def syntaxPrelude(): Unit = {
-    import clazz._
     import Prelude._
 
     def foo[F[_], A](xs: F[A])(implicit F: TC[F, Functor]): F[Foo[A]] =

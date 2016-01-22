@@ -7,6 +7,14 @@ import scala.language.implicitConversions
 trait Prelude extends data.DisjunctionFunctions {
   type \/[L, R] = data.Disjunction.\/[L, R]
 
+  type Apply[F[_]] = clazz.Apply[F]
+  type Functor[F[_]] = clazz.Functor[F]
+  type Applicative[F[_]] = clazz.Applicative[F]
+  type Bind[M[_]] = clazz.Bind[M]
+  type Monad[M[_]] = clazz.Monad[M]
+  type Foldable[T[_]] = clazz.Foldable[T]
+  type Traversable[T[_]] = clazz.Traversable[T]
+
   // FunctorSyntax
   implicit def PfunctorOps[F[_], A](fa: F[A])(implicit F: TC[F, Functor]): FunctorSyntax.Ops[F, A] =
     new FunctorSyntax.Ops(fa)(F.instance)
@@ -30,6 +38,13 @@ trait Prelude extends data.DisjunctionFunctions {
 
   // ApplicativeSyntax
   implicit def PapplicativeOpsA[A](a: A): ApplicativeSyntax.OpsA[A] = new ApplicativeSyntax.OpsA(a)
+
+  // FoldableSyntax
+  implicit def PfoldableOps[F[_], A](fa: F[A])(implicit F: TC[F, Foldable]): FoldableSyntax.Ops[F, A] =
+    new FoldableSyntax.Ops(fa)(F.instance)
+
+  implicit def PfoldableOpsU[F[_], FA](fa: FA)(implicit F: TCU[Foldable, FA]): FoldableSyntax.Ops[F.T, F.A] =
+    new FoldableSyntax.Ops(F(fa))(F.instance)
 
   // TraversableSyntax
   implicit def traversableOps[T[_], A](ta: T[A])(implicit T: TC[T, Traversable]): TraversableSyntax.Ops[T, A] =
