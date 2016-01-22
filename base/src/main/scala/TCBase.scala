@@ -44,5 +44,16 @@ object TCBase {
       TC.map(new ~~>[Apply, Functor] {
         override def apply[T[_]](mt: Apply[T]): Functor[T] = mt.functor
       })
+
+    implicit def traversableFunctor[T[_]](implicit TC: TC[T, Traversable]): TC[T, Functor] =
+      TC.map(new ~~>[Traversable, Functor] {
+        override def apply[U[_]](mt: Traversable[U]): Functor[U] = mt.functor
+      })
+
+    implicit def traversableFoldable[T[_]](implicit TC: TC[T, Traversable]): TC[T, Foldable] =
+      TC.map(new ~~>[Traversable, Foldable] {
+        override def apply[U[_]](mt: Traversable[U]): Foldable[U] = mt.foldable
+      })
+
   }
 }
