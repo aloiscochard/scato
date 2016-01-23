@@ -1,8 +1,5 @@
 package scato
 
-import scala.reflect.runtime.universe.TypeTag
-import scala.collection.concurrent.TrieMap
-
 import Leibniz.===
 
 abstract class ~~>[A[_[_]], B[_[_]]] {
@@ -15,26 +12,12 @@ abstract class ~~>>[A[_[_, _]], B[_[_, _]]] {
 
 abstract class TC[T[_], C[_[_]]] {
   def instance: C[T]
-  def instanceTag: TypeTag[_]
   def map[D[_[_]]](f: C ~~> D): TC[T, D] = TC(f(instance))
 }
 
 object TC {
-  private val cache: TrieMap[String, Any] = TrieMap()
-
-  def apply[T[_], C[_[_]]](i: C[T]): TC[T, C] =
-    new TC[T, C] {
-      override def instance = i
-      override def instanceTag = null
-    }
-
-  def capture[T[_], C[_[_]], ID[_]](i: => C[T])(implicit CT: TypeTag[C[ID]]): TC[T, C] =
-    new TC[T, C] {
-      override def instance = cache.getOrElseUpdate(instanceTag.toString, i).asInstanceOf[C[T]]
-      override def instanceTag = CT
-    }
+  def apply[T[_], C[_[_]]](i: C[T]): TC[T, C] = new TC[T, C] { override def instance = i }
 }
-
 
 case class TC2[T[_, _], C[_[_, _]]](instance: C[T]) extends AnyVal {
   def map[D[_[_, _]]](f: C ~~>> D): TC2[T, D] = TC2(f(instance))

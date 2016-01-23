@@ -5,7 +5,6 @@ import clazz._
 import Disjunction.{\/, L_, R_}
 
 trait DisjunctionInstances {
-  //implicit def monad[L]: TC[L \/ ?, Monad] = TC.capture[L \/ ?, Monad, Any \/ ?](new Monad[L \/ ?] {
   implicit def monad[L]: TC[L \/ ?, Monad] = TC[L \/ ?, Monad](new Monad[L \/ ?] {
     override val applicative = new Applicative[L \/ ?] {
       override val apply = new Apply[L \/ ?] {
