@@ -6,8 +6,8 @@ import clazz.Bind.syntax._
 import clazz.Functor.syntax._
 import clazz.Monad
 
-import system.MonadCore
-import system.MonadCore.Thunk
+import system.BindCore
+import system.BindCore.Thunk
 import system.Unsafe.Val
 
 case class StateT[S, M[_], A] private[transformers](thunk: Thunk) {
@@ -30,5 +30,5 @@ object StateT {
     StateT(Thunk.map[S, M[(A, S)]](Nil)(s => f(s).pure))
 
   def run[S, M[_], A](sma: StateT[S, M, A])(s: S): M[(A, S)] =
-    MonadCore.eval[S, M[(A, S)]](sma.thunk, s)
+    BindCore.Thunk.eval[S, M[(A, S)]](sma.thunk, s)
 }

@@ -2,8 +2,8 @@ package scato
 package free
 package monad
 
-import system.MonadCore
-import system.MonadCore.Thunk
+import system.BindCore
+import system.BindCore.Thunk
 
 case class Free[F[_], A](thunk: Thunk) {
   def ap[B](fab: Free[F, A => B]): Free[F, B] =
@@ -16,5 +16,5 @@ case class Free[F[_], A](thunk: Thunk) {
 
 object Free extends FreeInstances {
   def pure[F[_], A](a: A): Free[F, A] = Free(Thunk.pure[A](_ => a))
-  def run[F[_], A](free: Free[F, A]): F[A] = MonadCore.eval_[F[A]](free.thunk)
+  def run[F[_], A](free: Free[F, A]): F[A] = BindCore.Thunk.eval_[F[A]](free.thunk)
 }
