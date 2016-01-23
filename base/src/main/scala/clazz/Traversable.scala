@@ -1,7 +1,7 @@
 package scato
 package clazz
 
-abstract class Traversable[T[_]] {
+trait Traversable[T[_]] {
   def functor: Functor[T]
   def foldable: Foldable[T]
 

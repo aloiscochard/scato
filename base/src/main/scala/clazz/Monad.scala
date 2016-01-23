@@ -1,7 +1,7 @@
 package scato
 package clazz
 
-abstract class Monad[M[_]] {
+trait Monad[M[_]] {
   def applicative: Applicative[M]
   def bind: Bind[M]
 }

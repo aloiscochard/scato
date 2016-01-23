@@ -1,12 +1,8 @@
 package scato
 package clazz
 
-trait BindClass[M[_]] extends ApplyClass[M] { self =>
-  final implicit val bind: Bind[M] = new Bind[M] {
-    def apply: Apply[M] = self.apply
-    def flatMap[A, B](ma: M[A])(f: A => M[B]): M[B] = self.flatMap[A, B](ma)(f)
-  }
-  def flatMap[A, B](ma: M[A])(f: A => M[B]): M[B]
+trait BindClass[F[_]] extends Bind[F] with ApplyClass[F] {
+  override def ap[A, B](fa: F[A])(f: F[A => B]): F[B] = flatMap(f)(map(fa))
 
-  override def ap[A, B](fa: M[A])(f: M[A => B]): M[B] = flatMap(f)(map(fa))
+  implicit final def bind: Bind[F] = this
 }

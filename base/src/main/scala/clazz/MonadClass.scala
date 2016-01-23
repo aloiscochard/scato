@@ -1,11 +1,8 @@
 package scato
 package clazz
 
-trait MonadClass[M[_]] extends BindClass[M] with ApplicativeClass[M] { self =>
-  final implicit val monad: Monad[M] = new Monad[M] {
-    def applicative: Applicative[M] = self.applicative
-    def bind: Bind[M] = self.bind
-  }
+trait MonadClass[F[_]] extends Monad[F] with BindClass[F] with ApplicativeClass[F] {
+  override def map[A, B](ma: F[A])(f: (A) => B): F[B] = flatMap(ma)(a => pure(f(a)))
 
-  override def map[A, B](ma: M[A])(f: (A) => B): M[B] = flatMap(ma)(a => pure(f(a)))
+  implicit final def monad: Monad[F] = this
 }

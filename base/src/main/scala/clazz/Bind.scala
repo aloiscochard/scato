@@ -1,7 +1,7 @@
 package scato
 package clazz
 
-abstract class Bind[M[_]] {
+trait Bind[M[_]] {
   def apply: Apply[M]
   def flatMap[A, B](ma: M[A])(f: A => M[B]): M[B]
 }
