@@ -7,4 +7,6 @@ trait BindClass[M[_]] extends ApplyClass[M] { self =>
     def flatMap[A, B](ma: M[A])(f: A => M[B]): M[B] = self.flatMap[A, B](ma)(f)
   }
   def flatMap[A, B](ma: M[A])(f: A => M[B]): M[B]
+
+  override def ap[A, B](fa: M[A])(f: M[A => B]): M[B] = flatMap(f)(map(fa))
 }
