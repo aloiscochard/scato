@@ -48,7 +48,9 @@ object ScatoBuild extends Build {
     .enablePlugins(JmhPlugin)
     .settings(
       libraryDependencies ++=
-        Seq ( "org.scalaz" %% "scalaz-core" % "7.2.0"
+        Seq ( "org.scala-lang" % "scala-reflect" % scalaVersion.value
+            , "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided"
+            , "org.scalaz" %% "scalaz-core" % "7.2.0"
             , "org.spire-math" %% "cats" % "0.3.0" )
     )
 

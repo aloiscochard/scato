@@ -3,10 +3,6 @@ package benchmarks
 
 import org.openjdk.jmh.annotations.{Benchmark, BenchmarkMode, Fork, Mode}
 
-object Data {
-  val xs: List[Int] = (1 to 100000).toList
-}
-
 object Scato {
   import Prelude._
   import transformers.State
