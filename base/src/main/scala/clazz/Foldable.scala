@@ -9,7 +9,7 @@ abstract class Foldable[F[_]] {
 }
 
 object Foldable extends FoldableInstances {
-  def apply[F[_]](implicit F: TC[F, Foldable]): Foldable[F] = F.instance
+  def apply[F[_]](implicit F: Foldable[F]): Foldable[F] = F
 
   object syntax extends FoldableSyntax
 }

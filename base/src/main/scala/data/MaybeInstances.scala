@@ -5,7 +5,7 @@ import clazz._
 import Maybe.{Just, Empty}
 
 trait MaybeInstances {
-  implicit val monad: TC[Maybe, Monad] = TC(new Monad[Maybe] {
+  implicit val monad: Monad[Maybe] = new Monad[Maybe] {
     override val applicative = new Applicative[Maybe] {
       override val apply = new Apply[Maybe] {
         override val functor = new Functor[Maybe] {
@@ -23,5 +23,5 @@ trait MaybeInstances {
       override def flatMap[A, B](oa: Maybe[A])(f: A => Maybe[B]): Maybe[B] =
         oa.fold(a => f(a), Empty())
     }
-  })
+  }
 }

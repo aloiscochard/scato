@@ -7,7 +7,7 @@ abstract class Apply[F[_]] {
 }
 
 object Apply {
-  def apply[F[_]](implicit F: TC[F, Apply]): Apply[F] = F.instance
+  def apply[F[_]](implicit F: Apply[F]): Apply[F] = F
 
   object syntax extends ApplySyntax
 }

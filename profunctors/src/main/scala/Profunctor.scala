@@ -8,8 +8,7 @@ abstract class Profunctor[F[_, _]] {
 }
 
 object Profunctor extends ProfunctorInstances {
-  def apply[F[_, _]](implicit F: TC2[F, Profunctor]): Profunctor[F] = F.instance
-  implicit def profunctor[F[_, _]](implicit F: Profunctor[F]): TC2[F, Profunctor] = TC2[F, Profunctor](F)
+  def apply[F[_, _]](implicit F: Profunctor[F]): Profunctor[F] = F
 
   object syntax extends ProfunctorSyntax
 }

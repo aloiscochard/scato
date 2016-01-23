@@ -4,8 +4,8 @@ package profunctors
 import scala.language.implicitConversions
 
 trait ProfunctorSyntax {
-  implicit def profunctorOps[F[_, _], A, B](fa: F[A, B])(implicit F: TC2[F, Profunctor]): ProfunctorSyntax.Ops[F, A, B] =
-    new ProfunctorSyntax.Ops(fa)(F.instance)
+  implicit def profunctorOps[F[_, _], A, B](fa: F[A, B])(implicit F: Profunctor[F]): ProfunctorSyntax.Ops[F, A, B] =
+    new ProfunctorSyntax.Ops(fa)
 
     /*
   implicit def profunctorOpsU[F[_, _], FA](fa: FA)(implicit F: TCU[Functor, FA]): FunctorSyntax.Ops[F.T, F.A] =

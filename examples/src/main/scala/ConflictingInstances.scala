@@ -50,26 +50,24 @@ object ConflictingInstancesSubTyping {
 
 
 object ConflictingInstancesTC {
-  // So... instead of encoding our typeclass hierarchy with subtyping,
-  // let's wrape our instances in a newtype `TC[T[_], C[_[_]]]` that give use some structure
-  // and an opportunity to override the default implicits resolution mechanism.
+  // So... instead of encoding our typeclass hierarchy with subtyping, we simply compose them.
 
   // Typeclasses
   abstract class Foo[F[_]]
-  object Foo { implicit val option: TC[Option, Foo] = ??? }
+  object Foo { implicit val option: Foo[Option] = ??? }
 
   abstract class Bar[F[_]]
   object Bar {
-    implicit def all[F[_]](implicit F: TC[F, Foo]): TC[F, Bar] = ???
+    implicit def all[F[_]](implicit F: Foo[F]): Bar[F] = ???
   }
 
   abstract class Baz[F[_]]
-  object Baz { implicit def int[F[_]](implicit F: TC[F, Foo]): TC[F, Baz] = ??? }
+  object Baz { implicit def int[F[_]](implicit F: Foo[F]): Baz[F] = ??? }
 
   // Newtypes
   case class Wooz[F[_], A](run: F[A])
   object Wooz {
-    implicit def woozBar[F[_], A](implicit F: TC[F, Foo]): Bar[Wooz[F, ?]] = ???
+    implicit def woozBar[F[_], A](implicit F: Foo[F]): Bar[Wooz[F, ?]] = ???
   }
 
   case class Waaz[F[_], A](run: F[A])
@@ -77,28 +75,25 @@ object ConflictingInstancesTC {
     implicit def waazBar[F[_], A](implicit F: Foo[F]): Baz[Waaz[F, ?]] = ???
   }
 
-  // We now encode the relatioships, by giving some natural transformations `~~>[A[_[_]], B[_[_]]]`
-  // which works over the higher order functors formed by the typeclasses.
+  // We now encode the relationships, by giving some natural transformations over the typeclasses.
 
   // That's the only place where we use subtyping: to order the implicits priority and affect the resolution.
   trait Hierarchy0 {
-    implicit def barFoo[F[_]](implicit TC: TC[F, Bar]): TC[F, Foo] =
-      TC.map(new ~~>[Bar, Foo] { override def apply[T[_]](mt: Bar[T]): Foo[T] = ??? })
+    implicit def barFoo[F[_]](implicit F: Bar[F]): Foo[F] = ???
   }
 
   object Hierarchy extends Hierarchy0 {
-    implicit def bazFoo[F[_]](implicit TC: TC[F, Baz]): TC[F, Foo] =
-      TC.map(new ~~>[Baz, Foo] { override def apply[T[_]](mt: Baz[T]): Foo[T] = ??? })
+    implicit def bazFoo[F[_]](implicit F: Baz[F]): Foo[F] = ???
   }
 
   // Combinators
   import Hierarchy._
 
   // A foo combinator
-  def foo[F[_], A](f0: F[A], f1: F[A])(implicit F: TC[F, Foo]): F[A] = ???
+  def foo[F[_], A](f0: F[A], f1: F[A])(implicit F: Foo[F]): F[A] = ???
 
   // Now let's define an abstract function which use this combinator.
   def woozy[F[_], A](wooz: Wooz[F, A], waaz: Waaz[F, A])
-    (implicit FBar: TC[F, Bar], FBaz: TC[F, Baz]): F[A] =
+    (implicit FBar: Bar[F], FBaz: Baz[F]): F[A] =
       foo[F, A](wooz.run, waaz.run)
 }

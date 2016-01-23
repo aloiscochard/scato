@@ -49,10 +49,10 @@ object ConflictingSyntax {
     import Functor.syntax._
     import Applicative.syntax._
 
-    def foo[F[_], A](xs: F[A])(implicit F: TC[F, Functor]): F[Foo[A]] =
+    def foo[F[_], A](xs: F[A])(implicit F: Functor[F]): F[Foo[A]] =
       xs.map(Foo(_))
 
-    def bar[F[_]](implicit F: TC[F, Applicative]): F[Foo[Int]] =
+    def bar[F[_]](implicit F: Applicative[F]): F[Foo[Int]] =
       foo(42.pure[F])
   }
 
@@ -68,10 +68,10 @@ object ConflictingSyntax {
   def syntaxPrelude(): Unit = {
     import Prelude._
 
-    def foo[F[_], A](xs: F[A])(implicit F: TC[F, Functor]): F[Foo[A]] =
+    def foo[F[_], A](xs: F[A])(implicit F: Functor[F]): F[Foo[A]] =
       xs.map(Foo(_))
 
-    def bar[F[_]](implicit F: TC[F, Applicative]): F[Foo[Int]] =
+    def bar[F[_]](implicit F: Applicative[F]): F[Foo[Int]] =
       foo(42.pure[F])
   }
 

@@ -7,12 +7,12 @@ import Applicative.syntax._
 import Bind.syntax._
 
 trait OptionTInstances { instances =>
-  implicit def functor[F[_]](implicit F: TC[F, Functor]): Functor[OptionT[F, ?]] = new Functor[OptionT[F, ?]] {
+  implicit def functor[F[_]](implicit F: Functor[F]): Functor[OptionT[F, ?]] = new Functor[OptionT[F, ?]] {
     override def map[A, B](oa: OptionT[F, A])(f: A => B): OptionT[F, B] =
       OptionT(oa.run.map(_.map(f)))
   }
 
-  implicit def monad[F[_]](implicit F: TC[F, Monad]): Monad[OptionT[F, ?]] = new Monad[OptionT[F, ?]] {
+  implicit def monad[F[_]](implicit F: Monad[F]): Monad[OptionT[F, ?]] = new Monad[OptionT[F, ?]] {
     override val applicative = new Applicative[OptionT[F, ?]] {
       override val apply = new Apply[OptionT[F, ?]] {
         override val functor = instances.functor[F]
@@ -30,12 +30,7 @@ trait OptionTInstances { instances =>
     }
   }
 
-  implicit def applicativeTC[F[_], A](implicit F: TC[F, Monad]): TC[OptionT[F, ?], Applicative] =
-    TC[OptionT[F, ?], Applicative](monad.applicative)
-  implicit def applyTC[F[_], A](implicit F: TC[F, Monad]): TC[OptionT[F, ?], Apply] =
-    TC[OptionT[F, ?], Apply](monad.applicative.apply)
-  implicit def functorTC[F[_], A](implicit F: TC[F, Functor]): TC[OptionT[F, ?], Functor] =
-    TC[OptionT[F, ?], Functor](functor)
-  implicit def bindTC[F[_], A](implicit F: TC[F, Monad]): TC[OptionT[F, ?], Bind] =
-    TC[OptionT[F, ?], Bind](monad.bind)
+  implicit def applicative[F[_], A](implicit F: Monad[F]): Applicative[OptionT[F, ?]] = monad[F].applicative
+  implicit def apply[F[_], A](implicit F: Monad[F]): Apply[OptionT[F, ?]] = monad[F].applicative.apply
+  implicit def bind[F[_], A](implicit F: Monad[F]): Bind[OptionT[F, ?]] = monad.bind
 }

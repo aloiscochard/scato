@@ -1,4 +1,3 @@
-package object scato extends scato.TCBase
-                        with scato.TCUBase
-                        with scato.TCSyntax
+package object scato extends scato.BaseHierarchy
+                        with scato.BaseHierarchyU
 

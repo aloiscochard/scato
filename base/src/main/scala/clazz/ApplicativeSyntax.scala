@@ -9,6 +9,6 @@ trait ApplicativeSyntax {
 
 object ApplicativeSyntax {
   class OpsA[A](a: A) {
-    def pure[F[_]](implicit F: TC[F, Applicative]): F[A] = F.instance.pure(a)
+    def pure[F[_]](implicit F: Applicative[F]): F[A] = F.pure(a)
   }
 }

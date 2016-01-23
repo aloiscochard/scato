@@ -7,10 +7,10 @@ object Scato {
   import Prelude._
   import transformers.State
 
-  def mkState[F[_]](xs: F[Int])(f: Long => (Unit, Long))(implicit F: TC[F, Traversable]): State[Long, Unit] =
+  def mkState[F[_]](xs: F[Int])(f: Long => (Unit, Long))(implicit F: Traversable[F]): State[Long, Unit] =
     xs.foldLeft(State.pure[Long, Unit](()))((s, _) => s.flatMap(_ => State.state(f)))
 
-  def run[F[_]](xs: F[Int])(f: Long => (Unit, Long))(implicit F: TC[F, Traversable]): (Unit, Long) =
+  def run[F[_]](xs: F[Int])(f: Long => (Unit, Long))(implicit F: Traversable[F]): (Unit, Long) =
     State.run(mkState(xs)(f))(0)
 }
 

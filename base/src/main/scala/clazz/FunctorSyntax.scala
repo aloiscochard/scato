@@ -4,12 +4,12 @@ package clazz
 import scala.language.implicitConversions
 
 trait FunctorSyntax {
-  def map[F[_], A, B](fa: F[A])(f: A => B)(implicit F: TC[F, Functor]): F[B] = F.instance.map(fa)(f)
+  def map[F[_], A, B](fa: F[A])(f: A => B)(implicit F: Functor[F]): F[B] = F.map(fa)(f)
 
-  implicit def functorOps[F[_], A](fa: F[A])(implicit F: TC[F, Functor]): FunctorSyntax.Ops[F, A] =
-    new FunctorSyntax.Ops(fa)(F.instance)
+  implicit def functorOps[F[_], A](fa: F[A])(implicit F: Functor[F]): FunctorSyntax.Ops[F, A] =
+    new FunctorSyntax.Ops(fa)
 
-  implicit def functorOpsU[F[_], FA](fa: FA)(implicit F: TCU[Functor, FA]): FunctorSyntax.Ops[F.T, F.A] =
+  implicit def functorOpsU[F[_], FA](fa: FA)(implicit F: Unapply[Functor, FA]): FunctorSyntax.Ops[F.T, F.A] =
     new FunctorSyntax.Ops(F(fa))(F.instance)
 }
 

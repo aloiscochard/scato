@@ -7,7 +7,7 @@ abstract class Bind[M[_]] {
 }
 
 object Bind extends BindInstances {
-  def apply[F[_]](implicit F: TC[F, Bind]): Bind[F] = F.instance
+  def apply[F[_]](implicit F: Bind[F]): Bind[F] = F
 
   object syntax extends BindSyntax
 }

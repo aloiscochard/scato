@@ -6,7 +6,7 @@ abstract class Functor[F[_]] {
 }
 
 object Functor {
-  def apply[F[_]](implicit F: TC[F, Functor]): Functor[F] = F.instance
+  def apply[F[_]](implicit F: Functor[F]): Functor[F] = F
 
   object syntax extends FunctorSyntax
 }
