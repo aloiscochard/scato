@@ -1,10 +1,10 @@
 package scato
 package transformers
 
+import clazz.{Functor, Monad}
 import clazz.Applicative.syntax._
 import clazz.Bind.syntax._
 import clazz.Functor.syntax._
-import clazz.Monad
 
 import system.BindCore
 import system.BindCore.Thunk
@@ -28,6 +28,9 @@ object StateT {
 
   def state[S, M[_], A](f: S => (A, S))(implicit M: Monad[M]): StateT[S, M, A] =
     StateT(Thunk.map[S, M[(A, S)]](Nil)(s => f(s).pure))
+
+  def lift[S, M[_], A](ma: M[A])(implicit M: Monad[M]): StateT[S, M, A] =
+    StateT(Thunk.map[S, M[(A, S)]](Nil)(s => ma.map((_, s))))
 
   def run[S, M[_], A](sma: StateT[S, M, A])(s: S): M[(A, S)] =
     BindCore.Thunk.eval[S, M[(A, S)]](sma.thunk, s)
