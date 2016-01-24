@@ -24,4 +24,9 @@ trait StateTInstances {
         override def pure[A](a: A) = StateT.pure[S, M, A](a)
       }
     }
+
+  implicit def stateTMonadTrans[S]: MonadTrans[λ[(m[_], a) => StateT[S, m, a]]] =
+    new MonadTrans[λ[(m[_], a) => StateT[S, m, a]]] {
+      def lift[M[_]: Monad, A](ma: M[A]): StateT[S, M, A] = StateT.lift[S, M, A](ma)
+    }
 }

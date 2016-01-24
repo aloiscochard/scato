@@ -24,6 +24,7 @@ object ScatoBuild extends Build {
               , free
               , profunctors
               , transformers
+              , io
               , prelude
               , benchmarks
               , examples )
@@ -33,6 +34,8 @@ object ScatoBuild extends Build {
   lazy val free         = module("free").dependsOn(baze)
   lazy val profunctors  = module("profunctors").dependsOn(baze)
   lazy val transformers = module("transformers").dependsOn(baze)
+
+  lazy val io           = module("io").dependsOn(baze)
 
   lazy val prelude      = module("prelude").dependsOn(baze)
 
@@ -54,5 +57,6 @@ object ScatoBuild extends Build {
   lazy val examples     = module("examples").dependsOn( baze
                                                       , profunctors
                                                       , transformers
+                                                      , io
                                                       , prelude)
 }
