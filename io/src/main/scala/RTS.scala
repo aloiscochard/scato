@@ -15,9 +15,6 @@ case class RTS(ec: ExecutionContext, intr: Interruptor) {
 
   def unsafePerformIO[A](io: IO[A]): Future[A] =
     Val.reifyF[Future, A](unsafePerformEval(this)(io.thunk.reverse))
-
-  def unsafePerformIO_[A](io: IO[A]): A =
-    Await.result(unsafePerformIO(io), Duration.Inf)
 }
 
 object RTS {
