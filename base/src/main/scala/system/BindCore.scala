@@ -4,7 +4,9 @@ package system
 import scala.annotation.tailrec
 import Unsafe.Val
 
-case class BindCore[M[_], A, B](thunk: BindCore.Thunk)
+case class BindCore[A, B, M[_]](thunk: BindCore.Thunk, a: A) {
+  def eval: M[B] = BindCore.Thunk.eval[A, M[B]](thunk, a)
+}
 
 object BindCore {
 
