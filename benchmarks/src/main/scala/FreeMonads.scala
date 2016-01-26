@@ -38,7 +38,7 @@ object FreeMonads {
   }
 
   def run(freeT: FreeT[Op, State[Int, ?],Int]): Int = State.exec(freeT.run {
-    case Op.Add(i) => State.modify[Int](_ + i).flatMap(_ => State.pure(i))
+    case Op.Add(i) => State.modify[Int](_ + 1).flatMap(_ => State.pure(i))
     case Op.Get => State.get[Int]
   })(0)
 }
