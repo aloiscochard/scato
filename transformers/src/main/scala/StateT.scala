@@ -15,11 +15,17 @@ case class StateT[S, M[_], A] private[transformers](thunk: Thunk) {
 
   def flatMap[B](f: A => StateT[S, M, B])(implicit M: Monad[M]): StateT[S, M, B] =
     StateT(Thunk.map[M[(A, S)], M[(B, S)]](thunk)
-      (mas => mas.flatMap { case (a, s) => StateT.run(f(a))(s) }))
+      (mas => mas.flatMap { case (a, s) => f(a).run(s) }))
 
   def map[B](f: A => B)(implicit M: Monad[M]): StateT[S, M, B] =
     StateT(Thunk.map[M[(A, S)], M[(B, S)]](thunk)
       (mas => mas.map { case (a, s) => (f(a), s) }))
+
+  def run(s: S): M[(A, S)] =
+    BindCore.Thunk.eval[S, M[(A, S)]](thunk, s)
+
+  def exec(s: S)(implicit M: Functor[M]): M[S] =
+    run(s).map { case (_, s) => s }
 }
 
 object StateT {
@@ -40,12 +46,6 @@ object StateT {
   def lift[S, M[_], A](ma: M[A])(implicit M: Monad[M]): StateT[S, M, A] =
     StateT(Thunk.map[S, M[(A, S)]](Nil)(s => ma.map((_, s))))
 
-  def run[S, M[_], A](sma: StateT[S, M, A])(s: S): M[(A, S)] =
-    BindCore.Thunk.eval[S, M[(A, S)]](sma.thunk, s)
-
   def modify[S, M[_]](f: S => S)(implicit M: Monad[M]): StateT[S, M, Unit] =
     StateT(Thunk.map[S, M[(Unit, S)]](Nil)(s => M.applicative.pure[(Unit, S)](((), f(s)))))
-
-  def exec[S, M[_], A](sma: StateT[S, M, A])(s: S)(implicit M: Functor[M]): M[S] =
-    run[S, M, A](sma)(s).map { case (_, s) => s }
 }
