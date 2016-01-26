@@ -19,8 +19,8 @@ case class FreeT[F[_], M[_], A] private[monad](thunk: Thunk) {
   def flatMap[B](f: A => FreeT[F, M, B])(implicit F: Functor[F], M: Monad[M]): FreeT[F, M, B] =
     FreeT(Thunk.map[Core[F, M, A], Core[F, M, B]](thunk)
       { case (i, mas) => (i, M.bind.flatMap(mas) {
-          case L_(a) => M.bind.apply.functor.map(f(a).run(i.reify[F, M, B]))(L_(_))
-          case R_(fma) => M.applicative.pure(R_(F.map(fma)(M.bind.flatMap(_)(a => f(a).run(i.reify[F, M, B])))))
+          case L_(a) => M.bind.apply.functor.map(f(a).unsafeRun(i))(L_(_))
+          case R_(fma) => M.applicative.pure(R_(F.map(fma)(M.bind.flatMap(_)(a => f(a).unsafeRun(i)))))
       })})
 
   def map[B](f: A => B)(implicit F: Functor[F], M: Functor[M]): FreeT[F, M, B] =
@@ -35,12 +35,14 @@ case class FreeT[F[_], M[_], A] private[monad](thunk: Thunk) {
   //
   // def fold[A, B](f: A => M[B])(g: F[B] => M[B])(implicit F: Functor[F], M: Monad[M]): M[A] =
 
-  def run(f: F[M[A]] => M[A])(implicit M: Monad[M]): M[A] = {
+  def run(f: F[M[A]] => M[A])(implicit M: Monad[M]): M[A] = unsafeRun(Inter[F, M, A](f))
+
+  def unsafeRun(inter: FreeT.Inter)(implicit M: Monad[M]): M[A] = {
     val init = null.asInstanceOf[M[(A \/ F[M[A]])]]
-    val (_, res) = BindCore.Thunk.eval[Core[F, M, A], Core[F, M, A]](thunk, (Inter[F, M, A](f), init))
+    val (_, res) = BindCore.Thunk.eval[Core[F, M, A], Core[F, M, A]](thunk, (inter, init))
     M.bind.flatMap(res) {
       case L_(a) => M.applicative.pure(a)
-      case R_(fma) => f(fma)
+      case R_(fma) => inter.reify[F, M, A](fma)
     }
   }
 }

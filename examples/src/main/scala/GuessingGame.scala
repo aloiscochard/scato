@@ -14,7 +14,7 @@ object GuessingGame extends App {
 
   def mainIO: IO[Unit] = for {
     _ <- putStrLn("I'm thinking of a number between 1 and 100, can you guess it?")
-    n <- session(42).exec(0)
+    n <- StateT.exec(session(42))(0)
     _ <- putStrLn(s"Success in $n tries.")
   } yield ()
 
