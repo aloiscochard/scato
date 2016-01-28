@@ -11,7 +11,7 @@ trait DisjunctionInstances {
       ma.fold[L \/ B](l => L_(l))(r => R_(f(r)))
 
     override def ap[A, B](ma: L \/ A)(mf: L \/ (A => B)): L \/ B =
-      ma.fold[L \/ B](l => L_(l))(a => functor.map[(A => B), B](mf)(f => f(a)))
+      ma.fold[L \/ B](l => L_(l))(a => map[(A => B), B](mf)(f => f(a)))
 
     override def pure[A](a: A): L \/ A =
       R_[A](a)
