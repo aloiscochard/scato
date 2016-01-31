@@ -11,14 +11,25 @@ import transformers.State
 @Fork(1)
 @BenchmarkMode(Array(Mode.Throughput))
 class FreeMonads {
+  @Benchmark def freeTbuild = {
+    import FreeMonads._
+    mkFreeT[State[Int, ?]]
+  }
 
-  @Benchmark def freeT = {
+  @Benchmark def freeTrun = {
+    import FreeMonads._
+    run(freeT)
+  }
+
+  @Benchmark def freeTbuildAndRun = {
     import FreeMonads._
     run(mkFreeT[State[Int, ?]])
   }
 }
 
 object FreeMonads {
+  val freeT = mkFreeT[State[Int, ?]]
+
   sealed trait Op[+A]
 
   object Op extends FunctorClass[Op] {
@@ -34,11 +45,15 @@ object FreeMonads {
   def mkFreeT[M[_]: Monad]: FreeT[Op, M, Int] = {
     @tailrec def build(i: Int, prg: FreeT[Op, M, Unit]): FreeT[Op, M, Unit] =
       if (i < 1) prg else build(i - 1, prg.flatMap(_ => FreeT.liftF(Op.Add(i))))
-    build(1000, FreeT.pure[Op, M, Unit](())).flatMap(_ => FreeT.liftF[Op, M, Int](Op.Get))
+    build(1000000, FreeT.pure[Op, M, Unit](())).flatMap(_ => FreeT.liftF[Op, M, Int](Op.Get))
   }
 
   def run(freeT: FreeT[Op, State[Int, ?],Int]): Int = State.exec(freeT.run {
     case Op.Add(i) => State.modify[Int](_ + 1).flatMap(_ => State.pure(i))
     case Op.Get => State.get[Int]
   })(0)
+}
+
+object FreeMonadsScalaz {
+
 }
