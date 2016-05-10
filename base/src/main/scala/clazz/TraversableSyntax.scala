@@ -10,14 +10,11 @@ trait TraversableSyntax {
 
   implicit def traversableOps[T[_], A](ta: T[A])(implicit T: Traversable[T]): TraversableSyntax.Ops[T, A] =
     new TraversableSyntax.Ops(ta)
-
-  implicit def traversable[T[_], TA](ta: TA)(implicit T: Unapply[Traversable, TA]): TraversableSyntax.Ops[T.T, T.A] =
-    new TraversableSyntax.Ops(T(ta))(T.instance)
 }
 
 object TraversableSyntax {
   class Ops[T[_], A](self: T[A])(implicit T: Traversable[T]) {
-    def traverse[FB](f: A => FB)(implicit FB: Unapply[Applicative, FB]): FB.T[T[FB.A]] =
-      T.traverse(self)(FB.leibniz.onF(f))(FB.instance)
+    def traverse[F[_], B](f: A => F[B])(implicit F: Applicative[F]): F[T[B]] =
+      T.traverse(self)(f)
   }
 }

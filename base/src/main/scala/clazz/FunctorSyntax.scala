@@ -8,9 +8,6 @@ trait FunctorSyntax {
 
   implicit def functorOps[F[_], A](fa: F[A])(implicit F: Functor[F]): FunctorSyntax.Ops[F, A] =
     new FunctorSyntax.Ops(fa)
-
-  implicit def functorOpsU[F[_], FA](fa: FA)(implicit F: Unapply[Functor, FA]): FunctorSyntax.Ops[F.T, F.A] =
-    new FunctorSyntax.Ops(F(fa))(F.instance)
 }
 
 object FunctorSyntax {

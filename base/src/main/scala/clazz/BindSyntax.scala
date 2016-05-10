@@ -8,9 +8,6 @@ trait BindSyntax {
 
   implicit def bindOps[M[_], A](ma: M[A])(implicit M: Bind[M]): BindSyntax.Ops[M, A] =
     new BindSyntax.Ops(ma)
-
-  implicit def bindOpsU[M[_], MA](ma: MA)(implicit M: Unapply[Bind, MA]): BindSyntax.Ops[M.T, M.A] =
-    new BindSyntax.Ops(M(ma))(M.instance)
 }
 
 object BindSyntax {

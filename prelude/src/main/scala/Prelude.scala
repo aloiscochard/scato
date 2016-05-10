@@ -31,37 +31,21 @@ trait Prelude extends data.DisjunctionFunctions {
   implicit def PapplyOps[F[_], A](fa: F[A])(implicit F: Apply[F]): ApplySyntax.Ops[F, A] =
     new ApplySyntax.Ops(fa)
 
-  implicit def PapplyOpsU[F[_], FA](fa: FA)(implicit F: Unapply[Apply, FA]): ApplySyntax.Ops[F.T, F.A] =
-    new ApplySyntax.Ops[F.T, F.A](F(fa))(F.instance)
-
   // BindSyntax
   implicit def PbindOps[M[_], A](ma: M[A])(implicit M: Bind[M]): BindSyntax.Ops[M, A] =
     new BindSyntax.Ops(ma)
-
-  implicit def PbindOpsU[M[_], MA](ma: MA)(implicit M: Unapply[Bind, MA]): BindSyntax.Ops[M.T, M.A] =
-    new BindSyntax.Ops(M(ma))(M.instance)
 
   // FoldableSyntax
   implicit def PfoldableOps[F[_], A](fa: F[A])(implicit F: Foldable[F]): FoldableSyntax.Ops[F, A] =
     new FoldableSyntax.Ops(fa)
 
-  implicit def PfoldableOpsU[F[_], FA](fa: FA)(implicit F: Unapply[Foldable, FA]): FoldableSyntax.Ops[F.T, F.A] =
-    new FoldableSyntax.Ops(F(fa))(F.instance)
-
   // FunctorSyntax
   implicit def PfunctorOps[F[_], A](fa: F[A])(implicit F: Functor[F]): FunctorSyntax.Ops[F, A] =
     new FunctorSyntax.Ops(fa)
 
-  implicit def PfunctorOpsU[F[_], FA](fa: FA)(implicit F: Unapply[Functor, FA]): FunctorSyntax.Ops[F.T, F.A] =
-    new FunctorSyntax.Ops(F(fa))(F.instance)
-
   // TraversableSyntax
   implicit def PtraversableOps[T[_], A](ta: T[A])(implicit T: Traversable[T]): TraversableSyntax.Ops[T, A] =
     new TraversableSyntax.Ops(ta)
-
-  implicit def traversable[T[_], TA](ta: TA)(implicit T: Unapply[Traversable, TA]): TraversableSyntax.Ops[T.T, T.A] =
-    new TraversableSyntax.Ops(T(ta))(T.instance)
-
 
   // Core Data
   // =========
