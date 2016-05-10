@@ -32,10 +32,10 @@ object StateT extends StateTInstances {
   def syntax[S, M[_]](implicit M: Monad[M]): Syntax[S, M] = new Syntax[S, M]
 
   def pure[S, M[_], A](a: A)(implicit M: Monad[M]): StateT[S, M, A] =
-    StateT(Thunk.map[S, M[(A, S)]](Nil)(s => (a, s).pure))
+    StateT(Thunk.map[S, M[(A, S)]](Nil)(s => (a, s).pure[M]))
 
   def state[S, M[_], A](f: S => (A, S))(implicit M: Monad[M]): StateT[S, M, A] =
-    StateT(Thunk.map[S, M[(A, S)]](Nil)(s => f(s).pure))
+    StateT(Thunk.map[S, M[(A, S)]](Nil)(s => f(s).pure[M]))
 
   def lift[S, M[_], A](ma: M[A])(implicit M: Monad[M]): StateT[S, M, A] =
     StateT(Thunk.map[S, M[(A, S)]](Nil)(s => ma.map((_, s))))
@@ -44,7 +44,7 @@ object StateT extends StateTInstances {
     StateT(Thunk.map[S, M[(Unit, S)]](Nil)(s => M.applicative.pure[(Unit, S)](((), f(s)))))
 
   def get[S, M[_]](implicit M: Monad[M]): StateT[S, M, S] =
-    StateT(Thunk.map[S, M[(S, S)]](Nil)(s => (s, s).pure))
+    StateT(Thunk.map[S, M[(S, S)]](Nil)(s => (s, s).pure[M]))
 
   def run[S, M[_], A](sma: StateT[S, M, A])(s: S): M[(A, S)] =
     BindCore.Thunk.eval[S, M[(A, S)]](sma.thunk, s)
