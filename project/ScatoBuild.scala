@@ -15,13 +15,16 @@ object ScatoBuild extends Build {
                           "-Ybackend:GenBCode", "-Ydelambdafy:method", "-target:jvm-1.8"),
     libraryDependencies ++= testDeps ++ Seq(
       "org.scala-lang.modules" %% "scala-java8-compat" % "0.7.0",
-      compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
+      compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1"),
+      compilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.1.0" cross CrossVersion.full)
     )
   )
 
   lazy val root = Project(
     id = "root",
     base = file(".")
+  ).settings(
+    scalaVersion := "2.11.8"
   ).aggregate ( baze
               , free
               , profunctors
